@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendataan Warga - Desa Sukamanah</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+  <header class="bg-green-700 text-white py-4 shadow">
+    <div class="max-w-2xl mx-auto px-4 flex items-center space-x-4">
+      <img src="image/unis.jpg" alt="Logo UNIS" class="w-16 h-16 rounded-full bg-white p-1 shadow" />
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold">Pendataan Warga Desa Sukamanah</h1>
+        <p class="text-sm">Program KKN 2025 - Universitas Islam Syekh Yusuf Tangerang</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow relative">
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('image/cover.jpeg');"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    <section class="relative z-10 flex items-center justify-center p-6 min-h-[80vh]">
+      <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl bg-opacity-95">
+        <h2 class="text-xl font-semibold mb-4 text-center text-green-800">Form Pendataan Warga</h2>
+        <form id="wargaForm" class="space-y-4">
+          <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full p-2 border rounded" />
+          <input type="text" id="nik" placeholder="NIK (opsional)" class="w-full p-2 border rounded" />
+          <input type="number" id="umur" placeholder="Umur" required class="w-full p-2 border rounded" />
+          <select id="gender" required class="w-full p-2 border rounded">
+            <option value="">Pilih Jenis Kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+          <select id="pendidikan" required class="w-full p-2 border rounded">
+            <option value="">Pendidikan Terakhir</option>
+            <option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK/SMEA">SMA/SMK/SMEA</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option>
+          </select>
+          <select id="pekerjaan" required class="w-full p-2 border rounded">
+            <option value="">Pilih Pekerjaan</option>
+            <option value="Petani">Petani</option><option value="Buruh">Buruh</option><option value="Pedagang">Pedagang</option><option value="Guru">Guru</option><option value="PNS">PNS</option><option value="Karyawan Swasta">Karyawan Swasta</option><option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option><option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option><option value="Tidak Bekerja">Tidak Bekerja</option><option value="Lainnya">Lainnya</option>
+          </select>
+          <input type="number" id="gaji" placeholder="Gaji per Bulan (Rp)" class="w-full p-2 border rounded" />
+          <input type="text" id="nohp" placeholder="Nomor HP (opsional)" class="w-full p-2 border rounded" />
+          <textarea id="alamat" placeholder="Alamat" required class="w-full p-2 border rounded"></textarea>
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full">Kirim</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="text-center text-sm">© 2025 Anggota KKN Desa Sukamanah - Universitas Islam Syekh Yusuf Tangerang</div>
+  </footer>
+  
+  <script>
+    const form = document.getElementById('wargaForm');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwD3QZ3xFCbGha9BTeoVUx8edqUQDE9b9n0ySAbP4atKxt-tikM4qOTQXW4te1aw28XtA/exec'; 
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      submitButton.disabled = true;
+      submitButton.textContent = 'Mengirim...';
+      
+      const dataWarga = {
+        nama: document.getElementById('nama').value,
+        nik: document.getElementById('nik').value,
+        umur: document.getElementById('umur').value,
+        gender: document.getElementById('gender').value,
+        pendidikan: document.getElementById('pendidikan').value,
+        pekerjaan: document.getElementById('pekerjaan').value,
+        gaji: document.getElementById('gaji').value,
+        nohp: document.getElementById('nohp').value,
+        alamat: document.getElementById('alamat').value,
+      };
+
+      fetch(scriptURL, { 
+        method: 'POST', 
+        mode: 'no-cors', // <-- KUNCI RAHASIANYA ADA DI SINI
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataWarga)
+      })
+      .then(() => {
+        alert('Terima kasih! Data Anda telah berhasil direkam.');
+        form.reset();
+        submitButton.disabled = false;
+        submitButton.textContent = 'Kirim';
+      })
+      .catch(error => {
+        alert('Maaf, terjadi kesalahan. Silakan coba lagi.');
+        console.error('Error!', error.message);
+        submitButton.disabled = false;
+        submitButton.textContent = 'Kirim';
+      });
+    });
+  </script>
+</body>
+</html>
