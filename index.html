@@ -5,31 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pendataan Warga - Desa Sukamanah</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
   <header class="bg-green-700 text-white py-4 shadow">
     <div class="max-w-2xl mx-auto px-4 flex items-center space-x-4">
-      <img src="unis.jpg" alt="Logo UNIS" class="w-16 h-16 rounded-full bg-white p-1 shadow" />
+     <img src="unis.png" alt="Logo UNIS" class="w-16 h-16 shadow" />
       <div>
         <h1 class="text-xl sm:text-2xl font-bold">Pendataan Warga Desa Sukamanah</h1>
         <p class="text-sm">Program KKN 2025 - Universitas Islam Syekh Yusuf Tangerang</p>
       </div>
     </div>
   </header>
-
   <main class="flex-grow relative">
     <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('cover.jpeg');"></div>
     <div class="absolute inset-0 bg-black bg-opacity-50"></div>
     <section class="relative z-10 flex items-center justify-center p-6 min-h-[80vh]">
       <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl bg-opacity-95">
         <h2 class="text-xl font-semibold mb-4 text-center text-green-800">Form Pendataan Warga</h2>
-        <form id="wargaForm" class="space-y-4">
+        <form id="wargaForm" class="space-y-4"novalidate>
           <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full p-2 border rounded" />
           <input type="text" id="nik" placeholder="NIK (opsional)" class="w-full p-2 border rounded" />
           <input type="number" id="umur" placeholder="Umur" required class="w-full p-2 border rounded" />
           <select id="gender" required class="w-full p-2 border rounded">
-            <option value="">Pilih Jenis Kelamin</option>
+            <option value="">Jenis Kelamin</option>
             <option value="Laki-laki">Laki-laki</option>
             <option value="Perempuan">Perempuan</option>
           </select>
@@ -38,10 +38,16 @@
             <option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA/SMK/SMEA">SMA/SMK/SMEA</option><option value="D1">D1</option><option value="D2">D2</option><option value="D3">D3</option><option value="S1">S1</option><option value="S2">S2</option><option value="S3">S3</option><option value="Lainnya">Lainnya</option>
           </select>
           <select id="pekerjaan" required class="w-full p-2 border rounded">
-            <option value="">Pilih Pekerjaan</option>
+            <option value="">Pekerjaan</option>
             <option value="Petani">Petani</option><option value="Buruh">Buruh</option><option value="Pedagang">Pedagang</option><option value="Guru">Guru</option><option value="PNS">PNS</option><option value="Karyawan Swasta">Karyawan Swasta</option><option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option><option value="Pelajar/Mahasiswa">Pelajar/Mahasiswa</option><option value="Tidak Bekerja">Tidak Bekerja</option><option value="Lainnya">Lainnya</option>
           </select>
-          <input type="number" id="gaji" placeholder="Gaji per Bulan (Rp)" class="w-full p-2 border rounded" />
+          <select id="gaji" class="w-full p-2 border rounded">
+            <option value="">Gaji per-Bulan</option>
+            <option value="500.000 - 1.000.000">Rp 500.000 - Rp 1.000.000</option>
+            <option value="1.000.001 - 3.000.000">Rp 1.000.001 - Rp 3.000.000</option>
+            <option value="3.000.001 - 5.000.000">Rp 3.000.001 - Rp 5.000.000</option>
+            <option value="Tidak Ingin Menyebutkan">Tidak Ingin Menyebutkan</option>
+          </select>
           <input type="text" id="nohp" placeholder="Nomor HP (opsional)" class="w-full p-2 border rounded" />
           <textarea id="alamat" placeholder="Alamat" required class="w-full p-2 border rounded"></textarea>
           <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full">Kirim</button>
@@ -61,35 +67,64 @@
 
     form.addEventListener('submit', e => {
       e.preventDefault();
+
+      // --- Logika Validasi Dimulai ---
+      const nama = document.getElementById('nama').value.trim();
+      const umur = document.getElementById('umur').value.trim();
+      const gender = document.getElementById('gender').value;
+      const pendidikan = document.getElementById('pendidikan').value;
+      const pekerjaan = document.getElementById('pekerjaan').value;
+      const alamat = document.getElementById('alamat').value.trim();
+
+      if (!nama || !umur || !gender || !pendidikan || !pekerjaan || !alamat) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Form Belum Lengkap',
+          text: 'Harap isi semua kolom wajib terlebih dahulu!'
+        });
+        return; // Menghentikan pengiriman jika ada yang kosong
+      }
+      // --- Logika Validasi Selesai ---
+
       submitButton.disabled = true;
       submitButton.textContent = 'Mengirim...';
       
       const dataWarga = {
-        nama: document.getElementById('nama').value,
+        nama: nama,
         nik: document.getElementById('nik').value,
-        umur: document.getElementById('umur').value,
-        gender: document.getElementById('gender').value,
-        pendidikan: document.getElementById('pendidikan').value,
-        pekerjaan: document.getElementById('pekerjaan').value,
+        umur: umur,
+        gender: gender,
+        pendidikan: pendidikan,
+        pekerjaan: pekerjaan,
         gaji: document.getElementById('gaji').value,
         nohp: document.getElementById('nohp').value,
-        alamat: document.getElementById('alamat').value,
+        alamat: alamat,
       };
 
       fetch(scriptURL, { 
         method: 'POST', 
-        mode: 'no-cors', // <-- KUNCI RAHASIANYA ADA DI SINI
+        mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataWarga)
       })
       .then(() => {
-        alert('Terima kasih! Data Anda telah berhasil direkam.');
-        form.reset();
-        submitButton.disabled = false;
-        submitButton.textContent = 'Kirim';
+        Swal.fire({
+          icon: 'success',
+          title: 'Pendataan Berhasil!',
+          html: `Terima kasih, <b>${nama}</b> sudah terdata.`,
+          confirmButtonText: 'Oke Siap!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
       })
       .catch(error => {
-        alert('Maaf, terjadi kesalahan. Silakan coba lagi.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal Mengirim',
+          text: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
+        });
         console.error('Error!', error.message);
         submitButton.disabled = false;
         submitButton.textContent = 'Kirim';
